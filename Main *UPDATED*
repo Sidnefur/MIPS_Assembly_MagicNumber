@@ -53,7 +53,7 @@ shiftLoop:
 	
 UsedCheck:
 	and $t5, $s0, $t3
-	beq $t5, $zero, Random Num
+	bne $t5, $zero, GenerateRand
 
 ###################################################
 #
