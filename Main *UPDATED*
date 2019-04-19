@@ -1,0 +1,221 @@
+.data
+	PlayAgain:	.asciiz	 "Would you like to play again? (y/n)\n"
+	Return:		.asciiz  "\n"
+	WrongInput:	.asciiz	 "Sorry, you can't enter "
+	MagicNumber:	.asciiz	 "Abracadabra, your number is: "	
+	
+.text
+
+Main:
+	#Generate random number
+	li	$v0, 42
+	li	$a1, 6
+	syscall
+	
+	#Lower bounds (1-6)
+	add	$a0, $a0, 1
+	
+Cards:
+###################################################
+#
+#	Check random number to see if it has
+#	already been used. If it does then save
+#	it. 
+#
+###################################################
+	
+	#Save the random number for comparisons 
+	move	$a1, $a0
+
+###################################################
+#
+#	Take $a1 and use it to generate & display
+#	cards 1-6. By end of this we should
+#	have the final num in $s1, and the 
+#	register used to track all 6 card bit
+#	positions should be $s0
+#
+###################################################
+###################################################
+# (Duffy's isssh)
+#
+#Take the randomly generated card in $a1
+#Copy and covert the bit to the “card bit-by-bit” format
+#Store into $s0
+####################################################
+
+li $s0, 1
+#Value in $s0, to-be shifted
+
+move $t1, $a1
+#Holds the random value
+li $t2, 1
+#Holds the incremented varaible
+li $t3, 1
+#Holds the "card generated" bit representation variable
+
+shiftLoop:
+	beq $t1, $t2, generateDisplay
+	#if increment equals card random value, break from loop
+	addi $t2, $t2, 1
+	#increments by 1 each , the counter
+	sll $t3, $t3, 1
+	#increments "card used" representation
+	j shiftLoop
+	
+	
+generateDisplay:
+	or $s0, $s0, $t3
+
+##############
+# (Sid's)
+#
+#
+###################
+
+.text
+
+	addi $a1, $a1, 4
+	#initilize t0 to 0 for card display loop
+	li $t0, 0
+	#t4 is to count keys per line for formatting
+	li $t4, 0
+displayCardLoop:
+	#increment t0 for each iteration
+	addi $t0, $t0, 1
+	#if t0 contians the bit in a0 print the number
+	#else loop back
+	and $t1, $t0, $a1
+	beq $t1, $zero, displayCardLoop
+	
+	#print the number
+	li $v0, 1
+	move $a0, $t0
+	syscall
+	
+	#print a space (space is 32 in ascii)
+	li $v0, 11
+	li $a0, 32
+	syscall
+	
+	#add 1 to t4 to count another key printed
+	addi $t4, $t4, 1
+	
+	li $t3, 8
+	#print a new line if t4 is divisable by 8
+	divu $t4, $t3
+	
+	mfhi $t3
+	#if a new line does not need to be displayed loop back to card display loop
+	bnez $t3, displayCardLoop
+	
+	#print new line
+	li $v0, 11
+	li $a0, '\n'
+	syscall
+	
+	#while the itertions are less then 63
+	bne $t0, 63, displayCardLoop
+	
+end:
+	li $v0, 10
+	syscall
+##############################################
+ 
+ 
+
+
+	#Placeholder
+	addi	$s0, $zero, 63
+
+	#$t9 = 111111
+	addi	$t9, $zero, 63
+	
+	bne	$s0, $t9, Cards
+	#Put the magic number in $s1
+	addi	$s1, $zero, 69
+###################################################
+#
+#	Print the number the user was thinking of,
+#	which should be in $s1.
+#
+###################################################	
+PrintFinalNumber:
+	#Magic number prompt
+	li      $v0, 4       
+	la      $a0, MagicNumber
+	syscall 
+	
+	move	$a0, $s1
+	#Print the magic number in $s0
+	li      $v0, 1      
+	syscall 
+	
+	#Return for spacing
+	li      $v0, 4       
+	la      $a0, Return
+	syscall 
+	
+###################################################
+#
+#	Ask the user if they want to play again
+#	and compare input for branching.
+#
+###################################################	
+AskPlayAgain:	
+	#Ask user to play again
+	li      $v0, 4       
+	la      $a0, PlayAgain  
+	syscall 
+	
+	#Get user char input
+	li	$v0, 12
+	syscall
+	
+	#Save char for comparisons
+	move	$a2, $v0
+
+	#$t0 = n, $t1 = y
+	addi	$t0, $zero, 110
+	addi	$t1, $zero, 121
+	
+	#Return for spacing
+	li      $v0, 4       
+	la      $a0, Return
+	syscall 
+	
+	#Yes, No or Error
+	beq	$t1, $a2, Main
+	beq	$t0, $a2, End
+	
+###################################################	
+#
+#	If not 'y' or 'n', print back the input
+#	and loop back to AskPlayAgain.
+#
+###################################################
+Error:
+	#Return for spacing
+	li      $v0, 4       
+	la      $a0, WrongInput
+	syscall 
+	
+	move	$a0, $a2
+	li	$v0, 11
+	syscall
+	
+	#Return for spacing
+	li      $v0, 4       
+	la      $a0, Return
+	syscall 
+	
+	j	AskPlayAgain
+	
+###################################################
+#
+#	End the program.
+#
+###################################################
+End:
+	li $v0, 10
+	syscall
