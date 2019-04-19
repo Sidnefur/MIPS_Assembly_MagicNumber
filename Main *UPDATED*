@@ -26,6 +26,34 @@ Cards:
 	
 	#Save the random number for comparisons 
 	move	$a1, $a0
+	
+###################################################
+# 	(Duffy)
+#
+#	Check if $s0 contains bit already
+###################################################
+
+li $s0, 1
+
+move $t1, $a1
+#Holds the random variable
+li $t2, 1
+#Holds the incremented variable
+li $t3, 1
+#Holds the "card generated" bit representation variable
+
+shiftLoop:
+	beq $t1, $t2, UsedCheck
+	#if increment equals card random value, break from loop
+	addi $t2, $t2, 1
+	#increments by 1 each , the counter
+	sll $t3, $t3, 1
+	#increments "card used" representation
+	j shiftLoop
+	
+UsedCheck:
+	and $t5, $s0, $t3
+	beq $t5, $zero, Random Num
 
 ###################################################
 #
@@ -37,11 +65,11 @@ Cards:
 #
 ###################################################
 ###################################################
-# (Duffy's isssh)
-#
-#Take the randomly generated card in $a1
-#Copy and covert the bit to the “card bit-by-bit” format
-#Store into $s0
+#	 (Duffy's isssh)
+#	
+#	Take the randomly generated card in $a1
+#	Copy and covert the bit to the “card bit-by-bit” format
+#	Store into $s0
 ####################################################
 
 li $s0, 1
