@@ -1,22 +1,21 @@
 #Card 1
 #0 0 0 0 0 1 AND
-#1, 2, 3, 4, 5,…  in binary = 
+#1, 2, 3, 4, 5,â€¦  in binary = 
 #_ _ _ _ _ _ until limit reached (63 bit)
 
-#$s0 – cards displayed bits
-#$s1 – the number
-#$a1 – card bit to pass to subroutine for generating the card
+#$s0 â€“ cards displayed bits
+#$s1 â€“ the number
+#$a1 â€“ card bit to pass to subroutine for generating the card
 #-	Random num
 
 
 
 #What I want to do:
 #Take the randomly generated card in $a1
-#Copy and covert the bit to the “card bit-by-bit” format
+#Copy and covert the bit to the â€œcard bit-by-bitâ€ format
 #Store into $s0
 
 li $s0, 1
-li $a1, 4
 
 move $t1, $a1
 #Holds the random value
