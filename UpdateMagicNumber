@@ -1,0 +1,79 @@
+.data
+	  UserPrompt: .asciiz "Hey! Do you have the MagicNumber in the List. Type y if there and n if not!! "
+	  WrongInput1: .asciiz "Sorry!! The acceptable inputs are only y and n..."
+	  Return: .asciiz "\n"
+.text
+	main:
+    # Getting the Random Number as Input from register $a1.
+    # Need to remove it when integrating the code.
+		li $a1,3
+    
+    # Initializing the Register $s1(Which contains the Magic Number) to zero.
+		li $s1,0
+    
+    #Initializing the Register $s3 to 1(For allowing the shift left logical operations while updating the MAGICNUMBER in UpdateMagicNumberFunction.
+		li $s3,1
+    
+    # Storing the values of chars 'y' and 'n' in Ascii in registers $t0,$t1 for comparing the inputs.
+    # May required to change the Registers if they are already in use.
+		li $t0,121
+		li $t1,110
+	
+    #Asking the User for his input.
+		li $v0,4
+		la $a0,prompt
+		syscall
+	
+    # Storing the User input.  
+		li $v0,12
+		syscall
+		move $a2,$v0
+		
+    # If the User input is 'y' Go to the function UpdateMagicNumber.
+		beq $a2,$t0,UpdateMagicNumber
+    
+    # If the User input is 'n' Go to the function DoNotUpdateMagicNumber
+		beq $a2,$t1,DoNotUpdateMagicNumber
+    
+    # If the UserInput does not match either 'y' or 'n'. Go to the Error Function. 
+		j Error
+		
+  # Function for Updating the Magic Number.(i.e User Inputs 'y')
+	UpdateMagicNumber:
+    
+    # Shift the rightmost bit(Which is '1') by RandomNumber(Generated and stored in $a1) places.
+		sllv $s3,$s3,$a1
+    
+    # Updating the Value of the Magic Number.
+		add $s1,$s1,$s3
+    
+    # After Updating Go back to Generating Random Number again for next iteration.
+    # May need to Check and Update the Function to which the Counter should go...
+		j shiftLoop
+	
+  # Function when the user inputs 'n'. Need not update anything.
+	DoNotUpdateMagicNumber:
+  
+    # Need Not update the MagicNumber. So go to Generating Random Number again for next iteration.
+    # May need to Check and Update the Function to which the Counter should go...
+		j shiftLoop
+	
+  # If the user inputs anything otherthan 'y' or 'n'.
+	Error:
+    # For getting the Space
+		li $v0,4
+		la $a0,Return
+		syscall
+		
+    # For explaining the user that his input was wrong.
+		li $v0,4
+		la $a0, WrongInput
+		syscall
+		
+    # For getting the Space.
+		li $v0,4
+		la $a0,Return
+		syscall
+    
+    # For prompting the user to give the input again and going through the Loop to Update the MagicNumber.
+		j main
