@@ -1,0 +1,37 @@
+################################################################################
+#
+#
+#
+#			Magic Numbers Game Manual
+#				Wu Tang LAN
+#
+#
+################################################################################
+
+The Magic Numbers Game is a MIPS Assembly based game where the player picks a 
+number from 0 to 63, answers some questions, and (with a little magic) then has
+their number given back to them! 
+
+This game is run by opening the MagicNumbers.asm file in MARS, and then
+selecting the assemble button (the icon of a wrench crossed with a screwdriver).
+If the program is opened and assembled with no errors, the game can be started 
+by pressing the green play button. 
+
+The game will begin with a greeting and then asks the player to pick a number 
+from 0-63 (meaning 0 and 63 can be chosen as well). To guess this number, it 
+will then generate a series of cards in a random order. Each card will contain
+32 numbers, and if the player's number is in that card, they input 'y', or 'n'
+if it is not. The first card will be generated right away, but there's no 
+time constraint on the player! 
+
+*If the player enters anything other than these two characters here, it will 
+kindly ask them to input one of the selected characters. 
+
+After answering truthfully through the 6 random cards, the player's number
+will be given back to them!
+
+Finally, the game will ask the player if they would like to play again. They
+can then input 'y' to start over, or 'n' to end the game. 
+
+*If the player enters anything other than these two characters here, it will 
+also kindly ask them to input one of the selected characters. 
